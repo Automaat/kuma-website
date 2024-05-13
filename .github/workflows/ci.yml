@@ -134,8 +134,9 @@ jobs:
       - name: Run installer.sh with preview version
         env:
           VERBOSE: ${{ runner.debug }}
-          VERSION: 0.0.0-preview.v76e03eb68
         run: |
+          commit=$(curl -s --request GET --url "https://api.cloudsmith.io/v1/packages/kong/""$(echo ${PRODUCT_NAME} | tr '[:upper:]' '[:lower:]' | tr ' ' '-')""-binaries-preview/?page=1&page_size=1&query=filename%3A0.0.0-preview&sort=-date" --header 'accept: application/json' | jq -r '.[0].version')
+          VERSION="0.0.0-preview.v${commit}"
           sh app/installer.sh
           file ./kuma-*/bin/kumactl | grep x86-64 &> /dev/null
           rm -rf ./kuma-*/ 
